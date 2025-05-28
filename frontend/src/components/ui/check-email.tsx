@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "./button";
-import supabase from "@/config/supabase-config";
+import { createClient } from "@/lib/supabase/server";
 
 const CheckEmail = () => {
   const [checking, setChecking] = useState(false);
@@ -12,6 +12,7 @@ const CheckEmail = () => {
 
   const checkVerification = async () => {
     setChecking(true);
+    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();

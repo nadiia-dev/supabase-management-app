@@ -1,6 +1,8 @@
-import supabase from "@/config/supabase-config";
+"use server";
+import { createClient } from "@/lib/supabase/server";
 
 export const signUpUser = async (email: string, password: string) => {
+  const supabase = await createClient();
   try {
     const { error } = await supabase.auth.signUp({
       email,
@@ -30,6 +32,7 @@ export const signUpUser = async (email: string, password: string) => {
 };
 
 export const signInUser = async (email: string, password: string) => {
+  const supabase = await createClient();
   try {
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -54,6 +57,7 @@ export const signInUser = async (email: string, password: string) => {
 };
 
 export const authWithGoogle = async () => {
+  const supabase = await createClient();
   try {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -76,6 +80,7 @@ export const authWithGoogle = async () => {
 };
 
 export const forgotPassword = async (email: string) => {
+  const supabase = await createClient();
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `http://localhost:3000/update-password`,
@@ -99,6 +104,7 @@ export const forgotPassword = async (email: string) => {
 };
 
 export const updatePassword = async (password: string) => {
+  const supabase = await createClient();
   try {
     const { error } = await supabase.auth.updateUser({ password });
 
