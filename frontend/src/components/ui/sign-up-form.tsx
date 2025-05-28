@@ -35,7 +35,8 @@ export function SignUpForm() {
     try {
       const res: Result = await signUpUser(values.email, values.password);
       if (res.success) {
-        router.push("/onboarding");
+        toast("Check your email to confirm your registration.");
+        router.push("/check-email");
       } else {
         toast(res.message);
       }

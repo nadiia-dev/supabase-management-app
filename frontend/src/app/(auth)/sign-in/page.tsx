@@ -7,7 +7,7 @@ const Page = () => {
       <div className="flex flex-col gap-2 text-center w-full max-w-sm">
         <SignInForm />
         <p>or</p>
-        <GoogleAuthForm />
+        <GoogleAuthForm isRegister={false} />
       </div>
     </div>
   );
