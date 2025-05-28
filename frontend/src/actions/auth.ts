@@ -52,3 +52,47 @@ export const signInUser = async (email: string, password: string) => {
     };
   }
 };
+
+export const forgotPassword = async (email: string) => {
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `http://localhost:3000/update-password`,
+    });
+
+    if (error) throw error;
+
+    return { success: true, data: null };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+    return {
+      success: false,
+      message: "Unknown error occurred",
+    };
+  }
+};
+
+export const updatePassword = async (password: string) => {
+  try {
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) throw error;
+
+    return { success: true, data: null };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+    return {
+      success: false,
+      message: "Unknown error occurred",
+    };
+  }
+};
