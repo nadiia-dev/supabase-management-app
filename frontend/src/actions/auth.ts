@@ -56,29 +56,6 @@ export const signInUser = async (email: string, password: string) => {
   }
 };
 
-export const authWithGoogle = async () => {
-  const supabase = await createClient();
-  try {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-    });
-    if (error) throw error;
-
-    return { success: true, data: null };
-  } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-      };
-    }
-    return {
-      success: false,
-      message: "Unknown error occurred",
-    };
-  }
-};
-
 export const forgotPassword = async (email: string) => {
   const supabase = await createClient();
   try {

@@ -1,11 +1,11 @@
 "use client";
 
-import { authWithGoogle } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Result } from "@/types/result";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 const GoogleAuthForm = ({ isRegister }: { isRegister: boolean }) => {
   const router = useRouter();
@@ -17,14 +17,14 @@ const GoogleAuthForm = ({ isRegister }: { isRegister: boolean }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const res: Result = await authWithGoogle();
-      if (!res.success) throw error;
-
-      if (isRegister) {
-        router.push("/onboarding");
-      } else {
-        router.push("/dashboard");
-      }
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: "http://localhost:3000/onboarding",
+        },
+      });
+      if (error) throw error;
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
       setIsLoading(false);
