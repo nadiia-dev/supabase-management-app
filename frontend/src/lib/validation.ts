@@ -3,8 +3,10 @@ import { z } from "zod";
 export const signUpFormSchema = z
   .object({
     email: z.string().email(),
-    password: z.string(),
-    repeatPassword: z.string(),
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+    repeatPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters long"),
   })
   .superRefine((data, ctx) => {
     const repeat = !!data.repeatPassword;
@@ -24,3 +26,8 @@ export const signUpFormSchema = z
       });
     }
   });
+
+export const signInFormSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+});

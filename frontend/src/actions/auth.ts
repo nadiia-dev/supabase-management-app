@@ -1,12 +1,6 @@
 import supabase from "@/config/supabase-config";
 
-export const signUpUser = async ({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) => {
+export const signUpUser = async (email: string, password: string) => {
   try {
     const { error } = await supabase.auth.signUp({
       email,
@@ -15,10 +9,46 @@ export const signUpUser = async ({
         emailRedirectTo: ``,
       },
     });
-    if (error) throw error;
+
+    if (error) {
+      throw error;
+    }
+
+    return { success: true, data: null };
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      return {
+        success: false,
+        message: error.message,
+      };
     }
+    return {
+      success: false,
+      message: "Unknown error occurred",
+    };
+  }
+};
+
+export const signInUser = async (email: string, password: string) => {
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) throw error;
+
+    return { success: true, data: null };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+    return {
+      success: false,
+      message: "Unknown error occurred",
+    };
   }
 };
