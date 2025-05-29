@@ -101,3 +101,24 @@ export const updatePassword = async (password: string) => {
     };
   }
 };
+
+export const logoutUser = async () => {
+  const supabase = await createClient();
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+
+    return { success: true, data: null };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+    return {
+      success: false,
+      message: "Unknown error occurred",
+    };
+  }
+};

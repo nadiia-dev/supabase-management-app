@@ -9,11 +9,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { logoutUser } from "@/actions/auth";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const { data } = useUser();
+  const router = useRouter();
 
-  const handleLogout = () => {};
+  const handleLogout = async () => {
+    try {
+      const res = await logoutUser();
+      if (res.success) {
+        router.push("/sign-in");
+        toast("You were logged out");
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        toast(e.message);
+      }
+    }
+  };
 
   return (
     <header className="w-full h-16 px-4 flex items-center justify-end gap-5 border-b bg-white shadow-sm">
