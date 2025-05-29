@@ -12,10 +12,14 @@ import {
 import { logoutUser } from "@/actions/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Menu from "./menu";
+import { useIsMobile } from "@/hooks/use-mobile";
+import MobileMenu from "./mobile-menu";
 
 const Header = () => {
   const { data } = useUser();
   const router = useRouter();
+  const isMobile = useIsMobile();
 
   const handleLogout = async () => {
     try {
@@ -33,6 +37,7 @@ const Header = () => {
 
   return (
     <header className="w-full h-16 px-4 flex items-center justify-end gap-5 border-b bg-white shadow-sm">
+      {!isMobile && <Menu />}
       {data && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -71,6 +76,7 @@ const Header = () => {
       <div>
         <Sun />
       </div>
+      {isMobile && <MobileMenu />}
     </header>
   );
 };
