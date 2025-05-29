@@ -3,6 +3,7 @@ create table users (
   full_name text,
   email text,
   avatar_url text,
+  team_id uuid references teams(id)
   created_at timestamp with time zone default now()
 );
 

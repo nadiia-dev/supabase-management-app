@@ -1,5 +1,6 @@
 "use client";
 
+import { createTeam, joinTeam } from "@/actions/teams";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,18 +31,36 @@ const OnboardingForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof createTeamSchema>) => {
-    //   try {
-    //       const res: Result = await ;
-    //     if (res.success) {
-    //       router.push("/dashboard");
-    //     } else {
-    //       toast(res.message);
-    //     }
-    //   } catch (e) {
-    //     if (e instanceof Error) {
-    //       toast(e.message);
-    //     }
-    //   }
+    const { name, inviteCode } = values;
+
+    if (!name && !inviteCode) {
+      toast("Please enter a team name or an invite code.");
+      return;
+    }
+
+    if (name && inviteCode) {
+      toast("Please enter only one: either a team name or an invite code.");
+      return;
+    }
+
+    try {
+      if (inviteCode) {
+        const res: Result = await joinTeam(inviteCode!);
+        if (res.success) {
+          router.push(`/dashboard`);
+        }
+      } else if (name) {
+        const res: Result = await createTeam(name!);
+        if (res.success) {
+          toast("Your team was succesfully created!");
+          router.push(`/dashboard`);
+        }
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        toast(e.message);
+      }
+    }
   };
 
   return (

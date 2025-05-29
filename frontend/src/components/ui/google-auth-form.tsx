@@ -2,13 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Result } from "@/types/result";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-const GoogleAuthForm = ({ isRegister }: { isRegister: boolean }) => {
-  const router = useRouter();
+const GoogleAuthForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +18,7 @@ const GoogleAuthForm = ({ isRegister }: { isRegister: boolean }) => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "http://localhost:3000/onboarding",
+          redirectTo: "http://localhost:3000/callback",
         },
       });
       if (error) throw error;

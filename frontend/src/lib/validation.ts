@@ -32,10 +32,12 @@ export const signInFormSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
-export const createTeamSchema = z.object({
-  name: z
-    .string()
-    .min(2, "Team name must be at least 2 characters long")
-    .optional(),
-  inviteCode: z.string().optional(),
-});
+export const createTeamSchema = z
+  .object({
+    name: z.string().optional(),
+    inviteCode: z.string().optional(),
+  })
+  .refine((data) => data.name || data.inviteCode, {
+    message: "Please provide either a team name or an invite code",
+    path: ["name"],
+  });
