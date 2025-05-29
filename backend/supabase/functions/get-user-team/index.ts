@@ -25,8 +25,25 @@ serve(async (req) => {
 
   const { data, error } = await supabase
     .from("users")
-    .select("team_id")
-    .eq("id", user.id);
+    .select(
+      `
+    id,
+    name,
+    team_id,
+    team:team_id (
+      id,
+      name,
+      invite_link,
+      owner_id,
+      members:users (
+        id,
+        name
+      )
+    )
+  `
+    )
+    .eq("id", user.id)
+    .single();
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {

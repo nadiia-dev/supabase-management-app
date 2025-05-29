@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "./button";
+import { Button } from "../ui/button";
 import { createClient } from "@/lib/supabase/server";
 
 const CheckEmail = () => {

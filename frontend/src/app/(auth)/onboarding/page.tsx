@@ -1,4 +1,4 @@
-import OnboardingForm from "@/components/ui/onboarding-form";
+import OnboardingForm from "@/components/auth/onboarding-form";
 
 const Page = () => {
   return (

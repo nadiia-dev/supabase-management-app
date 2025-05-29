@@ -1,5 +1,5 @@
-import GoogleAuthForm from "@/components/ui/google-auth-form";
-import { SignInForm } from "@/components/ui/sign-in-form";
+import GoogleAuthForm from "@/components/auth/google-auth-form";
+import { SignInForm } from "@/components/auth/sign-in-form";
 
 const Page = () => {
   return (
