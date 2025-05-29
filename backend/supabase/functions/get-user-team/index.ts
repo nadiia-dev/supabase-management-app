@@ -7,11 +7,20 @@ const supabase = createClient(
 );
 
 serve(async (req) => {
+  const headers = new Headers({
+    "Access-Control-Allow-Origin": "http://localhost:3000",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
+    "Access-Control-Allow-Headers": "Authorization, Content-Type",
+  });
+
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers });
+  }
   const authHeader = req.headers.get("Authorization");
   const token = authHeader?.replace("Bearer ", "").trim();
 
   if (!token) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response("Unauthorized", { status: 401, headers });
   }
 
   const {
@@ -20,29 +29,28 @@ serve(async (req) => {
   } = await supabase.auth.getUser(token);
 
   if (authError || !user) {
-    return new Response("Invalid token", { status: 401 });
+    return new Response("Invalid token", { status: 401, headers });
   }
+
+  console.log(user);
 
   const { data, error } = await supabase
     .from("users")
     .select(
       `
-    id,
-    full_name,
-    avatar_url,
-    team_id,
-    team:team_id (
-      id,
-      name,
-      invite_link,
-      owner_id,
-      members:users (
+      team:team_id (
         id,
-        full_name,
-        avatar_url
+        team_name,
+        invite_link,
+        owner_id,
+        members:users!users_team_id_fkey (
+          id,
+          full_name,
+          avatar_url,
+          email
+        )
       )
-    )
-  `
+    `
     )
     .eq("id", user.id)
     .single();
@@ -50,8 +58,9 @@ serve(async (req) => {
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
+      headers,
     });
   }
 
-  return new Response(JSON.stringify({ data }), { status: 200 });
+  return new Response(JSON.stringify({ data }), { status: 200, headers });
 });

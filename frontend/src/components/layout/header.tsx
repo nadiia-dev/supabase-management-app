@@ -19,7 +19,7 @@ import MobileMenu from "./mobile-menu";
 const Header = () => {
   const { data } = useUser();
   const router = useRouter();
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
   const handleLogout = async () => {
     try {

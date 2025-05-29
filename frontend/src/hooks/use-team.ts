@@ -1,26 +1,36 @@
-import { getUserTeam } from "@/actions/teams";
-import { Result } from "@/types/result";
-import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
-export function useTeam(userId: string | null) {
-  const [team, setTeam] = useState(null);
-  const [loading, setLoading] = useState(true);
+const supabase = createClient();
 
-  useEffect(() => {
-    if (!userId) return;
+const getUserTeam = async () => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-    const fetchTeam = async () => {
-      const res: Result = await getUserTeam();
+  const token = session?.access_token;
+  if (!token) throw new Error("No access token");
 
-      if (res.data) {
-        setTeam(res.data);
-      }
+  const res = await fetch(`http://127.0.0.1:54321/functions/v1/get-user-team`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 
-      setLoading(false);
-    };
+  if (!res.ok) {
+    throw new Error(`Error: ${res.status} ${res.statusText}`);
+  }
 
-    fetchTeam();
-  }, [userId]);
+  const data = await res.json();
+  return data;
+};
 
-  return { team, loading };
+export function useTeam() {
+  return useQuery({
+    queryKey: ["getUserTeam"],
+    queryFn: getUserTeam,
+    staleTime: 1000 * 60 * 5,
+  });
 }
