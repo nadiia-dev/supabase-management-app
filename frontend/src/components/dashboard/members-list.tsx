@@ -21,7 +21,7 @@ interface Props {
 
 const MembersList = ({ members, ownerId }: Props) => {
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Team Members</CardTitle>
         <CardDescription>
