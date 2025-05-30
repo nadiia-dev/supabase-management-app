@@ -12,10 +12,6 @@ const Page = () => {
   if (isLoading) return <div>Завантаження...</div>;
   if (error) return <div>Сталася помилка</div>;
 
-  if (team?.data?.team) {
-    console.log(team.data.team);
-  }
-
   const handleCopy = () => {
     navigator.clipboard.writeText(team.data.team.invite_link).then(() => {
       setCopied(true);

@@ -32,8 +32,6 @@ serve(async (req) => {
     return new Response("Invalid token", { status: 401, headers });
   }
 
-  console.log(user);
-
   const { data, error } = await supabase
     .from("users")
     .select(
