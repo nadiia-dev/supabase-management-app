@@ -1,6 +1,6 @@
-CREATE OR REPLACE VIEW products_with_author AS
-SELECT
+create or replace view products_with_author as
+select
   p.*,
-  u.full_name AS author_name
-FROM products p
-LEFT JOIN users u ON p.author = u.id;
+  u.full_name as author_name
+from products p
+left join users u on p.author = u.id;

@@ -21,10 +21,22 @@ import {
 } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import PaginationControl from "./pagination-control";
+import { useState } from "react";
 
 const ProductsTable = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 5;
+  const offset = (currentPage - 1) * limit;
   const { data: team } = useTeam();
-  const { data, isLoading } = useProducts(team?.data.team?.id ?? "");
+
+  const { data, isLoading } = useProducts(
+    team?.data.team?.id ?? "",
+    offset,
+    limit
+  );
+  const totalCount = data ? data.length : 1;
+  const totalPages = Math.ceil(totalCount / limit);
   const router = useRouter();
 
   const handleDelete = () => {};
@@ -148,22 +160,12 @@ const ProductsTable = () => {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+        <PaginationControl
+          curPage={currentPage}
+          total={totalPages}
+          onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
+          showPrevNext
+        />
       </div>
     </div>
   );

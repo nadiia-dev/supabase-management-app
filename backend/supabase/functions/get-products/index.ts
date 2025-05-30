@@ -38,10 +38,15 @@ serve(async (req: Request) => {
   const parts = pathname.split("/");
   const team_id = parts[2];
 
+  const params = url.searchParams;
+  const offset = Number(params.get("offset"));
+  const limit = Number(params.get("limit"));
+
   const { data, error } = await supabase
     .from("products_with_author")
     .select("*")
-    .eq("team_id", team_id);
+    .eq("team_id", team_id)
+    .range(offset, offset + limit - 1);
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
