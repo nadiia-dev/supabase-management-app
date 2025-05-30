@@ -17,23 +17,32 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
 } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import PaginationControl from "./pagination-control";
 import { useState } from "react";
+import Filters from "./filters";
+import { useFilterContext } from "@/context/filters-context";
 
 const ProductsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const { columnFilters } = useFilterContext();
   const limit = 5;
   const offset = (currentPage - 1) * limit;
   const { data: team } = useTeam();
 
+  const status = columnFilters.find((filter) => filter.id === "status");
+  let value;
+  if (status) {
+    value = (status as { id: string; value: string }).value[0];
+  }
+
   const { data, isLoading } = useProducts(
     team?.data.team?.id ?? "",
     offset,
-    limit
+    limit,
+    value
   );
   const totalCount = data ? data.length : 1;
   const totalPages = Math.ceil(totalCount / limit);
@@ -103,69 +112,84 @@ const ProductsTable = () => {
   const table = useReactTable({
     data: products,
     columns,
+    manualPagination: true,
+    pageCount: totalPages,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      columnFilters,
+    },
   });
 
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <div className="m-2">
-      <div className="rounded-md border p-2">
-        <Table>
-          <TableCaption>A list of your products.</TableCaption>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+    <div className="m-2 grid grid-cols-[300px_1fr] gap-4">
+      <Filters />
+      <div>
+        <div className="rounded-md border p-2">
+          <Table>
+            <TableCaption>A list of your products.</TableCaption>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <PaginationControl
-          curPage={currentPage}
-          total={totalPages}
-          onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
-          showPrevNext
-        />
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length
+              ? `${table.getFilteredSelectedRowModel().rows.length} of{" "}`
+              : null}
+            {table.getFilteredRowModel().rows.length} row(s)
+          </div>
+          <div className="flex items-center justify-end space-x-2 py-4">
+            <PaginationControl
+              curPage={currentPage}
+              total={totalPages}
+              onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
+              showPrevNext
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

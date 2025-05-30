@@ -6,7 +6,8 @@ const supabase = createClient();
 const getTeamProducts = async (
   team_id: string,
   offset: number,
-  limit: number
+  limit: number,
+  status?: string
 ) => {
   const {
     data: { session },
@@ -16,7 +17,9 @@ const getTeamProducts = async (
   if (!token) throw new Error("No access token");
 
   const res = await fetch(
-    `http://127.0.0.1:54321/functions/v1/get-products/${team_id}?offset=${offset}&limit=${limit}`,
+    `http://127.0.0.1:54321/functions/v1/get-products/${team_id}?offset=${offset}&limit=${limit}${
+      status ? `&status=${status}` : ""
+    }`,
     {
       method: "GET",
       headers: {
@@ -34,10 +37,15 @@ const getTeamProducts = async (
   return json.data;
 };
 
-export function useProducts(team_id: string, offset: number, limit: number) {
+export function useProducts(
+  team_id: string,
+  offset: number,
+  limit: number,
+  status?: string
+) {
   return useQuery({
-    queryKey: ["getTeamProducts", team_id, offset, limit],
-    queryFn: () => getTeamProducts(team_id, offset, limit),
+    queryKey: ["getTeamProducts", team_id, offset, limit, status],
+    queryFn: () => getTeamProducts(team_id, offset, limit, status),
     enabled: !!team_id,
   });
 }

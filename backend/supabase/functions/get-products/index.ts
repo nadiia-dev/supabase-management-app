@@ -41,12 +41,18 @@ serve(async (req: Request) => {
   const params = url.searchParams;
   const offset = Number(params.get("offset"));
   const limit = Number(params.get("limit"));
+  const status = params.get("status");
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("products_with_author")
     .select("*")
-    .eq("team_id", team_id)
-    .range(offset, offset + limit - 1);
+    .eq("team_id", team_id);
+
+  if (status) {
+    query = query.eq("status", status);
+  }
+
+  const { data, error } = await query.range(offset, offset + limit - 1);
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
