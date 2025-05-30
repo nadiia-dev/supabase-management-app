@@ -35,14 +35,21 @@ const ProductsTable = () => {
   const status = columnFilters.find((filter) => filter.id === "status");
   let value;
   if (status) {
-    value = (status as { id: string; value: string }).value[0];
+    value = (status as { id: string; value: string }).value;
+  }
+
+  const author = columnFilters.find((filter) => filter.id === "author");
+  let memberValue;
+  if (status) {
+    memberValue = (author as { id: string; value: string }).value;
   }
 
   const { data, isLoading } = useProducts(
     team?.data.team?.id ?? "",
     offset,
     limit,
-    value
+    value,
+    memberValue
   );
   const totalCount = data ? data.length : 1;
   const totalPages = Math.ceil(totalCount / limit);

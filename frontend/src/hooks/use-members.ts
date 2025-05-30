@@ -3,13 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const supabase = createClient();
 
-const getTeamProducts = async (
-  team_id: string,
-  offset: number,
-  limit: number,
-  status?: string,
-  member?: string
-) => {
+const getTeamMembers = async (team_id: string) => {
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -18,9 +12,7 @@ const getTeamProducts = async (
   if (!token) throw new Error("No access token");
 
   const res = await fetch(
-    `http://127.0.0.1:54321/functions/v1/get-products/${team_id}?offset=${offset}&limit=${limit}${
-      status ? `&status=${status}` : ""
-    }${member ? `&author=${member}` : ""}`,
+    `http://127.0.0.1:54321/functions/v1/get-members/${team_id}`,
     {
       method: "GET",
       headers: {
@@ -38,16 +30,10 @@ const getTeamProducts = async (
   return json.data;
 };
 
-export function useProducts(
-  team_id: string,
-  offset: number,
-  limit: number,
-  status?: string,
-  member?: string
-) {
+export function useMembers(team_id: string) {
   return useQuery({
-    queryKey: ["getTeamProducts", team_id, offset, limit, status, member],
-    queryFn: () => getTeamProducts(team_id, offset, limit, status, member),
+    queryKey: ["getTeamMembers", team_id],
+    queryFn: () => getTeamMembers(team_id),
     enabled: !!team_id,
   });
 }

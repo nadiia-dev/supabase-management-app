@@ -6,14 +6,12 @@ const StatusList = ({ id }: { id: string }) => {
   const { columnFilters, setFilterValue } = useFilterContext();
   const statusFilter = columnFilters.find((filter) => filter.id === id);
 
-  const selectedStatuses = Array.isArray(statusFilter?.value)
-    ? statusFilter.value
-    : [];
+  const selectedStatus = statusFilter?.value || "";
 
   const toggleStatus = (status: string) => {
-    const newStatus = selectedStatuses[0] === status ? null : status;
+    const newStatus = selectedStatus === status ? null : status;
 
-    setFilterValue("status", newStatus ? [newStatus] : []);
+    setFilterValue("status", newStatus ? newStatus : "");
   };
 
   const statuses = ["draft", "active", "deleted"];
@@ -24,7 +22,7 @@ const StatusList = ({ id }: { id: string }) => {
           <Checkbox
             id={status}
             className="w-4 h-4"
-            checked={selectedStatuses.includes(status)}
+            checked={selectedStatus === status}
             onCheckedChange={() => toggleStatus(status)}
           />
           <Label htmlFor={status} className="text-md">

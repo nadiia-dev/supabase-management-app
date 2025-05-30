@@ -6,7 +6,7 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
-serve(async (req) => {
+serve(async (req: Request) => {
   const headers = new Headers({
     "Access-Control-Allow-Origin": "http://localhost:3000",
     "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
@@ -40,13 +40,7 @@ serve(async (req) => {
         id,
         team_name,
         invite_link,
-        owner_id,
-        members:users!users_team_id_fkey (
-          id,
-          full_name,
-          avatar_url,
-          email
-        )
+        owner_id
       )
     `
     )

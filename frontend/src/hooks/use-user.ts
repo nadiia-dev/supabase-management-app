@@ -23,8 +23,8 @@ async function fetchCurrentUser() {
     throw new Error(`Error: ${res.status} ${res.statusText}`);
   }
 
-  const data = await res.json();
-  return data;
+  const json = await res.json();
+  return json.data;
 }
 
 export function useUser() {

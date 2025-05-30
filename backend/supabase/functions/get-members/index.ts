@@ -1,5 +1,11 @@
-import { serve } from "https://deno.land/std/http/server.ts";
+// Follow this setup guide to integrate the Deno language server with your editor:
+// https://deno.land/manual/getting_started/setup_your_environment
+// This enables autocomplete, go to definition, etc.
+
+// Setup type definitions for built-in Supabase Runtime APIs
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js";
+import { serve } from "https://deno.land/std/http/server.ts";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -37,27 +43,12 @@ serve(async (req: Request) => {
   const pathname = url.pathname;
   const parts = pathname.split("/");
   const team_id = parts[2];
+  console.log(team_id);
 
-  const params = url.searchParams;
-  const offset = Number(params.get("offset"));
-  const limit = Number(params.get("limit"));
-  const status = params.get("status");
-  const author = params.get("author");
-
-  let query = supabase
-    .from("products_with_author")
-    .select("*")
+  const { data, error } = await supabase
+    .from("users")
+    .select()
     .eq("team_id", team_id);
-
-  if (status) {
-    query = query.eq("status", status);
-  }
-
-  if (author) {
-    query = query.eq("author", author);
-  }
-
-  const { data, error } = await query.range(offset, offset + limit - 1);
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
