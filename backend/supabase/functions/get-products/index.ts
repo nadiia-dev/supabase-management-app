@@ -39,8 +39,8 @@ serve(async (req: Request) => {
   const team_id = parts[2];
 
   const { data, error } = await supabase
-    .from("products")
-    .select()
+    .from("products_with_author")
+    .select("*")
     .eq("team_id", team_id);
 
   if (error) {
