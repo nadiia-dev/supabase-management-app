@@ -12,7 +12,7 @@ const getTeamMembers = async (team_id: string) => {
   if (!token) throw new Error("No access token");
 
   const res = await fetch(
-    `http://127.0.0.1:54321/functions/v1/get-members/${team_id}`,
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/get-members/${team_id}`,
     {
       method: "GET",
       headers: {

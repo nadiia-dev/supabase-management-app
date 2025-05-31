@@ -1,13 +1,7 @@
-"use client";
-import ProductsTable from "@/components/products/products-table";
-import { FilterProvider } from "@/context/filters-context";
+import ProductsPage from "@/components/products/products-page";
 
 const Page = () => {
-  return (
-    <FilterProvider>
-      <ProductsTable />
-    </FilterProvider>
-  );
+  return <ProductsPage />;
 };
 
 export default Page;

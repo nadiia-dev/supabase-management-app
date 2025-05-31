@@ -11,14 +11,17 @@ export const createTeam = async (name: string) => {
 
   const data = { name };
   try {
-    const res = await fetch("http://127.0.0.1:54321/functions/v1/create-team", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await fetch(
+      `${process.env.SUPABASE_URL}/functions/v1/create-team`,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return { success: true, data: res.json() };
   } catch (error) {
     if (error instanceof Error) {
@@ -44,14 +47,17 @@ export const joinTeam = async (code: string) => {
   const data = { code };
 
   try {
-    const res = await fetch(`http://127.0.0.1:54321/functions/v1/join-team`, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await fetch(
+      `${process.env.SUPABASE_URL}/functions/v1/join-team`,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     return { success: true, data: res.json() };
   } catch (error) {

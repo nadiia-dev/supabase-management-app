@@ -8,7 +8,7 @@ export const signUpUser = async (email: string, password: string) => {
       email,
       password,
       options: {
-        emailRedirectTo: `http://localhost:3000/onboarding`,
+        emailRedirectTo: `${process.env.CLIENT_URL}/onboarding`,
       },
     });
 
@@ -60,7 +60,7 @@ export const forgotPassword = async (email: string) => {
   const supabase = await createClient();
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `http://localhost:3000/update-password`,
+      redirectTo: `${process.env.CLIENT_URL}/update-password`,
     });
 
     if (error) throw error;

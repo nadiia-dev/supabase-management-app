@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -27,29 +28,17 @@ import { useFilterContext } from "@/context/filters-context";
 
 const ProductsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
+
   const { columnFilters } = useFilterContext();
   const limit = 5;
   const offset = (currentPage - 1) * limit;
   const { data: team } = useTeam();
 
-  const status = columnFilters.find((filter) => filter.id === "status");
-  let value;
-  if (status) {
-    value = (status as { id: string; value: string }).value;
-  }
-
-  const author = columnFilters.find((filter) => filter.id === "author");
-  let memberValue;
-  if (status) {
-    memberValue = (author as { id: string; value: string }).value;
-  }
-
-  const { data, isLoading } = useProducts(
+  const { data } = useProducts(
     team?.data.team?.id ?? "",
     offset,
     limit,
-    value,
-    memberValue
+    columnFilters
   );
   const totalCount = data ? data.length : 1;
   const totalPages = Math.ceil(totalCount / limit);
@@ -127,10 +116,8 @@ const ProductsTable = () => {
     },
   });
 
-  if (isLoading) return <p>Loading...</p>;
-
   return (
-    <div className="m-2 grid grid-cols-[300px_1fr] gap-4">
+    <div className="m-2 md:grid md:grid-cols-[300px_1fr] md:gap-4">
       <Filters />
       <div>
         <div className="rounded-md border p-2">

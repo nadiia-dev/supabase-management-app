@@ -1,7 +1,13 @@
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { ColumnFiltersState } from "@tanstack/react-table";
 
 const supabase = createClient();
+
+interface FilterValue {
+  id: string;
+  value: string;
+}
 
 const getTeamProducts = async (
   team_id: string,
@@ -18,7 +24,9 @@ const getTeamProducts = async (
   if (!token) throw new Error("No access token");
 
   const res = await fetch(
-    `http://127.0.0.1:54321/functions/v1/get-products/${team_id}?offset=${offset}&limit=${limit}${
+    `${
+      process.env.NEXT_PUBLIC_SUPABASE_URL
+    }/functions/v1/get-products/${team_id}?offset=${offset}&limit=${limit}${
       status ? `&status=${status}` : ""
     }${member ? `&author=${member}` : ""}`,
     {
@@ -42,12 +50,27 @@ export function useProducts(
   team_id: string,
   offset: number,
   limit: number,
-  status?: string,
-  member?: string
+  columnFilters?: ColumnFiltersState
 ) {
+  const status = columnFilters?.find((filter) => filter.id === "status") as
+    | FilterValue
+    | undefined;
+
+  const author = columnFilters?.find((filter) => filter.id === "author") as
+    | FilterValue
+    | undefined;
+
   return useQuery({
-    queryKey: ["getTeamProducts", team_id, offset, limit, status, member],
-    queryFn: () => getTeamProducts(team_id, offset, limit, status, member),
+    queryKey: [
+      "getTeamProducts",
+      team_id,
+      offset,
+      limit,
+      status?.value,
+      author?.value,
+    ],
+    queryFn: () =>
+      getTeamProducts(team_id, offset, limit, status?.value, author?.value),
     enabled: !!team_id,
   });
 }

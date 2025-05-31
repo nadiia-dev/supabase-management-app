@@ -33,13 +33,16 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${origin}/error`);
     }
 
-    const res = await fetch(`http://127.0.0.1:54321/functions/v1/get-user`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/get-user`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const userData = await res.json();
 
