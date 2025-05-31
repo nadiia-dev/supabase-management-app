@@ -170,7 +170,7 @@ enabled = true
 host = "env(BREVO_HOST)"
 port = "env(BREVO_PORT)"
 user = "env(BREVO_USER)"
-pass = "env(BREVO_API_KEY)"
+pass = "env(BREVO_SMTP_PASS)"
 admin_email = "env(BREVO_ADMIN_EMAIL)"
 sender_name = "env(BREVO_SENDER_NAME)"
 

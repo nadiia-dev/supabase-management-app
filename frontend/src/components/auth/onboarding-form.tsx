@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCheckAuth } from "@/hooks/use-check-auth";
 import { createTeamSchema } from "@/lib/validation";
 import { Result } from "@/types/result";
 import { ErrorMessage } from "@hookform/error-message";
@@ -30,8 +31,17 @@ const OnboardingForm = () => {
     resolver: zodResolver(createTeamSchema),
   });
 
+  const { session, isLoading } = useCheckAuth();
+
   const onSubmit = async (values: z.infer<typeof createTeamSchema>) => {
     const { name, inviteCode } = values;
+
+    if (!session) {
+      toast(
+        "Error: Session is not active. Try reloading the page or logging in again."
+      );
+      return;
+    }
 
     if (!name && !inviteCode) {
       toast("Please enter a team name or an invite code.");
@@ -62,6 +72,40 @@ const OnboardingForm = () => {
       }
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p>Loading your profile...</p>
+          <p className="text-sm text-gray-500 mt-2">
+            If the download is slow, try reloading the page.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-md mx-auto p-6">
+          <h2 className="text-xl font-semibold mb-4">Authentication failed</h2>
+          <p className="text-gray-600 mb-6">
+            Perhaps the link is outdated or there was an error when confirming
+            the email.
+          </p>
+          <button
+            onClick={() => router.push("/sign-in")}
+            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+          >
+            Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">

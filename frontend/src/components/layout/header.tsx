@@ -42,7 +42,7 @@ const Header = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="flex items-center gap-2 cursor-pointer">
-              {data ? (
+              {data.avatar_url ? (
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={`${data.avatar_url}`} alt="user avatar" />
                 </Avatar>
@@ -51,7 +51,7 @@ const Header = () => {
               )}
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate text-sm">
-                  {data ? data.full_name : data.email}
+                  {data.full_name ? data.full_name : data.email}
                 </span>
               </div>
               <ChevronUp className="ml-auto" />

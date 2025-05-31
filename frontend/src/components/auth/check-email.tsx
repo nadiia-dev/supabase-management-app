@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 const CheckEmail = () => {
   const [checking, setChecking] = useState(false);
@@ -12,15 +12,19 @@ const CheckEmail = () => {
 
   const checkVerification = async () => {
     setChecking(true);
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    const isConfirmed = !!user?.email_confirmed_at;
+    const supabase = createClient();
+    const { data: sessionData } = await supabase.auth.getSession();
+
+    if (!sessionData?.session) {
+      console.log("No active session found.");
+      setChecking(false);
+      return;
+    }
+
+    const isConfirmed = !!sessionData.session.user?.email_confirmed_at;
 
     if (isConfirmed) {
       setIsVerified(true);
-      router.push("/onboarding");
     } else {
       setChecking(false);
     }
@@ -33,6 +37,12 @@ const CheckEmail = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (isVerified) {
+      router.push("/sign-in");
+    }
+  }, [isVerified]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

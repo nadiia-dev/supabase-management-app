@@ -1,7 +1,3 @@
-alter table products
-add column author uuid references users(id),
-add column created_at timestamp with time zone default now();
-
 create or replace function public.handle_new_user()  
 returns trigger as $$
 begin

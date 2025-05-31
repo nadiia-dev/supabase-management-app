@@ -24,9 +24,9 @@ const Page = () => {
   return (
     <div>
       {team && members && (
-        <div className="flex gap-6">
+        <div className="flex flex-col-reverse gap-6 md:flex-row">
           <MembersList members={members} ownerId={team.data.team.owner_id} />
-          <div className="w-full bg-gray-100 rounded-xl p-4 shadow-md">
+          <div className="w-full h-40 bg-gray-100 rounded-xl p-4 shadow-md">
             <div className="text-lg text-gray-600 mb-5">
               Invite members to your team via invite code
             </div>

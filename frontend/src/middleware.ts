@@ -14,6 +14,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
+  if (data?.user && request.nextUrl.pathname.startsWith("/sign-up")) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   return await updateSession(request);
 }
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { updatePassword } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,7 +10,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createClient } from "@/lib/supabase/client";
 import { ErrorMessage } from "@hookform/error-message";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -20,19 +21,25 @@ type Values = {
 };
 
 export function UpdatePasswordForm() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<Values>();
 
+  const supabase = createClient();
+
   const handleUpdatePassword = async (values: Values) => {
     try {
-      const res = await updatePassword(values.password);
-      if (res.success) {
+      const { error } = await supabase.auth.updateUser({
+        password: values.password,
+      });
+
+      if (error) toast(error.message);
+      else {
         toast("Your password was successfully updated");
-      } else {
-        toast(res.message);
+        router.push("/dashboard");
       }
     } catch (e) {
       if (e instanceof Error) {

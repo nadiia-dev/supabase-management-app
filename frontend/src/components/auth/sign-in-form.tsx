@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useUser } from "@/hooks/use-user";
 import { signInFormSchema } from "@/lib/validation";
 import { Result } from "@/types/result";
 import { ErrorMessage } from "@hookform/error-message";
@@ -23,6 +24,8 @@ import { z } from "zod";
 
 export function SignInForm() {
   const router = useRouter();
+  const { data: userData } = useUser();
+  console.log(userData);
   const {
     register,
     handleSubmit,
@@ -35,7 +38,8 @@ export function SignInForm() {
     try {
       const res: Result = await signInUser(values.email, values.password);
       if (res.success) {
-        router.push("/dashboard");
+        if (userData?.team_id) router.push("/dashboard");
+        else router.push("/onboarding");
       } else {
         toast(res.message);
       }

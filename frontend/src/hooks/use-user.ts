@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { User } from "@/types/user";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 const supabase = createClient();
 
@@ -27,8 +28,8 @@ async function fetchCurrentUser() {
   return json.data;
 }
 
-export function useUser() {
-  return useQuery({
+export function useUser(): UseQueryResult<User, Error> {
+  return useQuery<User, Error>({
     queryKey: ["currentUser"],
     queryFn: fetchCurrentUser,
     retry: false,

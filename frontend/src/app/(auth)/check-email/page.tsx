@@ -1,4 +1,4 @@
-import CheckEmail from "@/components/ui/check-email";
+import CheckEmail from "@/components/auth/check-email";
 
 const Page = async () => {
   return <CheckEmail />;
