@@ -1,8 +1,3 @@
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
-
-// Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { serve } from "https://deno.land/std/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js";
@@ -12,7 +7,7 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
-serve(async (req: Request) => {
+serve(async (req) => {
   const headers = new Headers({
     "Access-Control-Allow-Origin": "http://localhost:3000",
     "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
@@ -39,19 +34,13 @@ serve(async (req: Request) => {
     return new Response("Invalid token", { status: 401, headers });
   }
 
-  const url = new URL(req.url);
-  const pathname = url.pathname;
-  const parts = pathname.split("/");
-  const team_id = parts[2];
-  const product_id = parts[3];
-  console.log(team_id);
-  console.log(product_id);
+  const body = await req.json();
+  const { full_name, avatar_url } = body;
 
   const { data, error } = await supabase
-    .from("products")
-    .eq("id", product_id)
-    .eq("team_id", team_id)
-    .single();
+    .from("users")
+    .update({ full_name, avatar_url })
+    .eq("id", user.id);
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {

@@ -25,7 +25,6 @@ import { z } from "zod";
 export function SignInForm() {
   const router = useRouter();
   const { data: userData } = useUser();
-  console.log(userData);
   const {
     register,
     handleSubmit,

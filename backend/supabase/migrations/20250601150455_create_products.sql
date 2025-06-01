@@ -4,7 +4,9 @@ create table products(
     description text,
     image text,
     status text default 'draft',
-    team_id uuid references teams(id)
+    team_id uuid references teams(id),
+    author uuid references users(id),
+    created_at timestamp with time zone default now()
 );
 
 alter table products enable row level security;

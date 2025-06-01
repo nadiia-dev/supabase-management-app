@@ -41,3 +41,9 @@ export const createTeamSchema = z
     message: "Please provide either a team name or an invite code",
     path: ["name"],
   });
+
+export const updateUserSchema = z.object({
+  full_name: z.string().min(2).optional(),
+  email: z.string().email().optional(),
+  avatar_url: z.string().optional(),
+});
