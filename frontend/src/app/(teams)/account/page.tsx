@@ -1,6 +1,7 @@
 "use client";
 
 import { uploadImages } from "@/actions/upload-files";
+import FormsSkeleton from "@/components/layout/forms-skeleton";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,7 +46,7 @@ const Page = () => {
     }
   }, [user, form]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <FormsSkeleton />;
 
   const onSubmit = (values: z.infer<typeof updateUserSchema>) => {
     const { full_name, avatar_url } = values;
@@ -73,7 +74,7 @@ const Page = () => {
   };
 
   return (
-    <div>
+    <div className="lg:px-30">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField

@@ -9,7 +9,7 @@ import { User } from "@/types/user";
 const AuthorsList = ({ id }: { id: string }) => {
   const { data } = useUser();
   const team_id = data?.team_id;
-  const { data: authors, isLoading } = useMembers(team_id);
+  const { data: authors, isLoading } = useMembers(team_id!);
 
   const { columnFilters, setFilterValue } = useFilterContext();
   const statusFilter = columnFilters.find((filter) => filter.id === id);

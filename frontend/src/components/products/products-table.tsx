@@ -26,15 +26,18 @@ import { useState } from "react";
 import Filters from "./filters";
 import { useFilterContext } from "@/context/filters-context";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import StatusChangeConfirm from "./status-change-confirm";
 
 const ProductsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<string>("");
 
   const { columnFilters } = useFilterContext();
   const limit = 5;
   const offset = (currentPage - 1) * limit;
   const { data: team } = useTeam();
-  const { useGetProducts, changeStatus } = useProducts();
+  const { useGetProducts } = useProducts();
 
   const { data } = useGetProducts(
     team?.data.team?.id ?? "",
@@ -47,20 +50,17 @@ const ProductsTable = () => {
   const totalPages = Math.ceil(totalCount / limit);
   const router = useRouter();
 
-  const handleDelete = (id: string) => {
-    changeStatus.mutate({ id: id, status: "deleted" });
-  };
-
   const columns: ColumnDef<Product>[] = [
     {
       accessorKey: "image",
       header: "Image",
       cell: ({ row }) => {
         return (
-          <Avatar className="h-8 w-8 rounded-lg">
+          <Avatar className="rounded-lg">
             <AvatarImage
               src={row.getValue("image")}
               alt={row.getValue("title")}
+              className="h-10 w-10"
             />
           </Avatar>
         );
@@ -116,7 +116,10 @@ const ProductsTable = () => {
             <Button
               variant="destructive"
               size="icon"
-              onClick={() => handleDelete(id!)}
+              onClick={() => {
+                setOpen(true);
+                setSelected(id!);
+              }}
               disabled={status === "deleted"}
             >
               <Trash2 className="h-4 w-4" />
@@ -140,7 +143,7 @@ const ProductsTable = () => {
   });
 
   return (
-    <div className="m-2 md:grid md:grid-cols-[300px_1fr] md:gap-4">
+    <div className="mt-2 md:grid md:grid-cols-[300px_1fr] md:gap-4">
       <Filters />
       <div>
         <div className="rounded-md border p-2">
@@ -208,6 +211,12 @@ const ProductsTable = () => {
           </div>
         </div>
       </div>
+      <StatusChangeConfirm
+        id={selected}
+        open={open}
+        setOpen={setOpen}
+        status="deleted"
+      />
     </div>
   );
 };

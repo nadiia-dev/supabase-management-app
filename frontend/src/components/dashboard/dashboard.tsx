@@ -26,6 +26,10 @@ const Dashboard = () => {
 
   return (
     <div>
+      <h1 className="mb-4 text-xl">
+        Welcome to <span className="font-bold">{team.data.team.team_name}</span>
+        !
+      </h1>
       {team && members && (
         <div className="flex flex-col-reverse gap-6 md:flex-row">
           <MembersList members={members} ownerId={team.data.team.owner_id} />

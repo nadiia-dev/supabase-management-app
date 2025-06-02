@@ -22,6 +22,8 @@ import { toast } from "sonner";
 import { Product } from "@/types/product";
 import { useUser } from "@/hooks/use-user";
 import { useProducts } from "@/context/products-context";
+import StatusChangeConfirm from "./status-change-confirm";
+import { useState } from "react";
 
 const ProductForm = ({
   product,
@@ -30,6 +32,7 @@ const ProductForm = ({
   product?: Product;
   formMode: string;
 }) => {
+  const [open, setOpen] = useState(false);
   const { data: user } = useUser();
   const form = useForm<z.infer<typeof createProductSchema>>({
     resolver: zodResolver(createProductSchema),
@@ -84,76 +87,85 @@ const ProductForm = ({
     }
   };
 
-  const onChangeStatus = () => {
-    changeStatus.mutate({ id: product?.id!, status: "active" });
-  };
-
   return (
-    <div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter your product title" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Type your description here"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex flex-col gap-4 md:w-1/3">
-              <Label htmlFor="picture" className="text-sm leading-none">
-                Product photo
-              </Label>
-              {form.watch("image") && (
-                <Avatar className="h-30 w-30 rounded-lg overflow-hidden">
-                  <AvatarImage
-                    src={form.watch("image")}
-                    alt={product?.title || "user avatar"}
-                    className="w-full h-full object-cover"
-                  />
-                </Avatar>
+    <>
+      <div className="lg:px-30">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your product title" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              <div>
-                <Input id="picture" type="file" onChange={handleChange} />
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Type your description here"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex flex-col gap-4 md:w-1/3">
+                <Label htmlFor="picture" className="text-sm leading-none">
+                  Product photo
+                </Label>
+                {form.watch("image") && (
+                  <Avatar className="h-30 w-30 rounded-lg overflow-hidden">
+                    <AvatarImage
+                      src={form.watch("image")}
+                      alt={product?.title || "user avatar"}
+                      className="w-full h-full object-cover"
+                    />
+                  </Avatar>
+                )}
+                <div>
+                  <Input id="picture" type="file" onChange={handleChange} />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex justify-end gap-5">
-            {formMode === "edit" && product?.status === "draft" && (
-              <Button type="button" onClick={onChangeStatus}>
-                Activate
+            <div className="flex justify-end gap-5">
+              {formMode === "edit" && product?.status === "draft" && (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setOpen(true);
+                  }}
+                >
+                  Activate
+                </Button>
+              )}
+              <Button type="submit">
+                {formMode === "edit" ? "Update" : "Create"} product
               </Button>
-            )}
-            <Button type="submit">
-              {formMode === "edit" ? "Update" : "Create"} product
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </div>
+            </div>
+          </form>
+        </Form>
+      </div>
+      <StatusChangeConfirm
+        id={product?.id!}
+        open={open}
+        setOpen={setOpen}
+        status="active"
+      />
+    </>
   );
 };
 
