@@ -47,3 +47,10 @@ export const updateUserSchema = z.object({
   email: z.string().email().optional(),
   avatar_url: z.string().optional(),
 });
+
+export const createProductSchema = z.object({
+  title: z.string().min(2),
+  description: z.string().min(2).optional(),
+  image: z.string().optional(),
+  status: z.enum(["draft", "active", "deleted"]),
+});

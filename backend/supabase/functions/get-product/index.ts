@@ -42,15 +42,12 @@ serve(async (req: Request) => {
   const url = new URL(req.url);
   const pathname = url.pathname;
   const parts = pathname.split("/");
-  const team_id = parts[2];
-  const product_id = parts[3];
-  console.log(team_id);
-  console.log(product_id);
+  const product_id = parts[2];
 
   const { data, error } = await supabase
     .from("products")
+    .select("*")
     .eq("id", product_id)
-    .eq("team_id", team_id)
     .single();
 
   if (error) {

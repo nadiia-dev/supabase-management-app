@@ -40,7 +40,7 @@ serve(async (req: Request) => {
   }
 
   const body = await req.json();
-  const { title, description, image, status } = body;
+  const { title, description, image } = body;
 
   const url = new URL(req.url);
   const pathname = url.pathname;
@@ -49,7 +49,7 @@ serve(async (req: Request) => {
 
   const { data, error } = await supabase
     .from("products")
-    .update({ title, description, image, status })
+    .update({ title, description, image })
     .eq("id", id);
 
   if (error) {

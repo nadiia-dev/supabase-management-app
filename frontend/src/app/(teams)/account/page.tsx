@@ -47,7 +47,7 @@ const Page = () => {
 
   if (isLoading) return <p>Loading...</p>;
 
-  const onSubmit = async (values: z.infer<typeof updateUserSchema>) => {
+  const onSubmit = (values: z.infer<typeof updateUserSchema>) => {
     const { full_name, avatar_url } = values;
     mutate({ full_name, avatar_url });
     if (isSuccess) {

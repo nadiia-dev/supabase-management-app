@@ -40,11 +40,11 @@ serve(async (req: Request) => {
   }
 
   const body = await req.json();
-  const { team_id, title, description, image, status } = body;
+  const { team_id, title, description, image, status, author } = body;
 
   const { data, error } = await supabase
     .from("products")
-    .insert({ team_id, title, description, image, status });
+    .insert({ team_id, title, description, image, status, author });
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {

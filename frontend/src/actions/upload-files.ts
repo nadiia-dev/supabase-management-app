@@ -3,10 +3,13 @@
 import { createClient } from "@/lib/supabase/server";
 
 export const uploadImages = async (file: File, bucketname: string) => {
-  console.log(file);
   const supabase = await createClient();
   try {
-    const filename = new Date().getTime() + file.name;
+    const formattedName = file.name
+      .normalize("NFKD")
+      .replace(/[^\w.-]+/g, "_")
+      .toLowerCase();
+    const filename = new Date().getTime() + formattedName;
     const { data, error } = await supabase.storage
       .from(bucketname)
       .upload(filename, file);
