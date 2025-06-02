@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useProducts } from "@/hooks/use-products";
+import { useProducts } from "@/context/products-context";
 import { useTeam } from "@/hooks/use-team";
 import { Product } from "@/types/product";
 import {
@@ -25,6 +25,7 @@ import PaginationControl from "./pagination-control";
 import { useState } from "react";
 import Filters from "./filters";
 import { useFilterContext } from "@/context/filters-context";
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 
 const ProductsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,23 +34,37 @@ const ProductsTable = () => {
   const limit = 5;
   const offset = (currentPage - 1) * limit;
   const { data: team } = useTeam();
+  const { useGetProducts, changeStatus } = useProducts();
 
-  const { data } = useProducts(
+  const { data } = useGetProducts(
     team?.data.team?.id ?? "",
     offset,
     limit,
     columnFilters
   );
-  const totalCount = data ? data.length : 1;
+  const productsData = data?.data;
+  const totalCount = productsData ? productsData.length : 1;
   const totalPages = Math.ceil(totalCount / limit);
   const router = useRouter();
 
-  const handleDelete = () => {};
+  const handleDelete = (id: string) => {
+    changeStatus.mutate({ id: id, status: "deleted" });
+  };
 
   const columns: ColumnDef<Product>[] = [
     {
       accessorKey: "image",
       header: "Image",
+      cell: ({ row }) => {
+        return (
+          <Avatar className="h-8 w-8 rounded-lg">
+            <AvatarImage
+              src={row.getValue("image")}
+              alt={row.getValue("title")}
+            />
+          </Avatar>
+        );
+      },
     },
     {
       accessorKey: "title",
@@ -86,16 +101,24 @@ const ProductsTable = () => {
       header: () => <div className="text-center">Actions</div>,
       cell: ({ row }) => {
         const id = row.original.id;
+        const status = row.getValue("status");
         return (
           <div className="flex justify-center gap-2">
             <Button
               variant="outline"
               size="icon"
               onClick={() => router.push(`/products/${id}/edit`)}
+              disabled={status !== "draft"}
             >
               <Pencil className="h-4 w-4" />
             </Button>
-            <Button variant="destructive" size="icon" onClick={handleDelete}>
+
+            <Button
+              variant="destructive"
+              size="icon"
+              onClick={() => handleDelete(id!)}
+              disabled={status === "deleted"}
+            >
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
@@ -103,7 +126,7 @@ const ProductsTable = () => {
       },
     },
   ];
-  const products = data ?? [];
+  const products = productsData ?? [];
 
   const table = useReactTable({
     data: products,

@@ -41,27 +41,32 @@ const ProductForm = ({
     },
   });
 
-  const { createProduct, updateProduct } = useProducts();
+  const { createProduct, updateProduct, changeStatus } = useProducts();
 
   const onSubmit = (values: z.infer<typeof createProductSchema>) => {
-    const author = user?.id || product?.author;
+    const author = user?.id;
     if (!author) {
-      throw new Error("Author is required but not found in user or product");
+      throw new Error("Author is required but not found in product");
     }
-    const newProduct = {
-      title: values.title,
-      description: values.description || "",
-      image: values.image || "",
-      team_id: user?.team_id!,
-      author,
-      status: values.status,
-    };
 
     if (formMode === "add") {
+      const newProduct = {
+        title: values.title,
+        description: values.description || "",
+        image: values.image || "",
+        team_id: user?.team_id!,
+        author,
+        status: values.status,
+      };
       createProduct.mutate(newProduct);
     }
     if (formMode === "edit") {
-      updateProduct.mutate({ id: product?.id!, data: newProduct });
+      const toUpdate = {
+        title: values.title,
+        description: values.description || "",
+        image: values.image || "",
+      };
+      updateProduct.mutate({ id: product?.id!, data: toUpdate });
     }
   };
 
@@ -77,6 +82,10 @@ const ProductForm = ({
         toast.error(e.message);
       }
     }
+  };
+
+  const onChangeStatus = () => {
+    changeStatus.mutate({ id: product?.id!, status: "active" });
   };
 
   return (
@@ -115,12 +124,12 @@ const ProductForm = ({
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex flex-col gap-4 md:w-1/3">
               <Label htmlFor="picture" className="text-sm leading-none">
-                Avatar
+                Product photo
               </Label>
               {form.watch("image") && (
                 <Avatar className="h-30 w-30 rounded-lg overflow-hidden">
                   <AvatarImage
-                    src={form.watch("image") || "https://placehold.co/400x400"}
+                    src={form.watch("image")}
                     alt={product?.title || "user avatar"}
                     className="w-full h-full object-cover"
                   />
@@ -133,8 +142,14 @@ const ProductForm = ({
           </div>
 
           <div className="flex justify-end gap-5">
-            <Button type="button">Activate</Button>
-            <Button type="submit">Update product</Button>
+            {formMode === "edit" && product?.status === "draft" && (
+              <Button type="button" onClick={onChangeStatus}>
+                Activate
+              </Button>
+            )}
+            <Button type="submit">
+              {formMode === "edit" ? "Update" : "Create"} product
+            </Button>
           </div>
         </form>
       </Form>

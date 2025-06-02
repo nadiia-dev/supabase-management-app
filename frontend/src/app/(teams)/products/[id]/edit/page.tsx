@@ -13,7 +13,7 @@ const Page = () => {
 
   if (isLoading) return <p>Loading...</p>;
 
-  return <ProductForm formMode="edit" product={product?.data} />;
+  return <ProductForm formMode="edit" product={product} />;
 };
 
 export default Page;

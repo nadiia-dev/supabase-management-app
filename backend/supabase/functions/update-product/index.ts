@@ -47,6 +47,19 @@ serve(async (req: Request) => {
   const parts = pathname.split("/");
   const id = parts[2];
 
+  const { data: productData } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (productData.status === "active" || productData.status === "deleted") {
+    return new Response(JSON.stringify({ error: "Action is not allowed!" }), {
+      status: 403,
+      headers,
+    });
+  }
+
   const { data, error } = await supabase
     .from("products")
     .update({ title, description, image })
