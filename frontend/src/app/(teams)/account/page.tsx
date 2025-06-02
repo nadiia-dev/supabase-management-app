@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -14,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUser } from "@/hooks/use-user";
+import { useUpdateUser, useUser } from "@/hooks/use-user";
 import { updateUserSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -26,6 +25,7 @@ import { z } from "zod";
 const Page = () => {
   const router = useRouter();
   const { data: user, isLoading } = useUser();
+  const { mutate, isPending, isSuccess, isError } = useUpdateUser();
   const form = useForm<z.infer<typeof updateUserSchema>>({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
@@ -48,7 +48,14 @@ const Page = () => {
   if (isLoading) return <p>Loading...</p>;
 
   const onSubmit = async (values: z.infer<typeof updateUserSchema>) => {
-    console.log(values);
+    const { full_name, avatar_url } = values;
+    mutate({ full_name, avatar_url });
+    if (isSuccess) {
+      toast("User data updated successfully!");
+    }
+    if (isError) {
+      toast("Error while updating user data(");
+    }
   };
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,7 +85,6 @@ const Page = () => {
                 <FormControl>
                   <Input placeholder="Enter your name" {...field} />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
@@ -90,7 +96,7 @@ const Page = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" {...field} />
+                  <Input placeholder="Enter your email" {...field} disabled />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -126,7 +132,9 @@ const Page = () => {
             >
               Cancel
             </Button>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={isPending}>
+              Submit
+            </Button>
           </div>
         </form>
       </Form>

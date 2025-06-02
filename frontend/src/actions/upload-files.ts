@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 
 export const uploadImages = async (file: File, bucketname: string) => {
+  console.log(file);
   const supabase = await createClient();
   try {
     const filename = new Date().getTime() + file.name;
@@ -11,7 +12,7 @@ export const uploadImages = async (file: File, bucketname: string) => {
       .upload(filename, file);
     if (error) throw new Error(error.message);
 
-    const url = await supabase.storage.from("default").getPublicUrl(filename);
+    const url = await supabase.storage.from(bucketname).getPublicUrl(filename);
     return {
       success: true,
       data: url.data.publicUrl,

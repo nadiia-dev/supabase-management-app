@@ -36,7 +36,9 @@ serve(async (req) => {
 
   const { data: team, error: teamError } = await supabase
     .from("teams")
-    .insert({ team_name: name, invite_link: inviteCode, owner_id: user.id });
+    .insert({ team_name: name, invite_link: inviteCode, owner_id: user.id })
+    .select()
+    .single();
 
   if (teamError) {
     return new Response(JSON.stringify({ error: teamError.message }), {
