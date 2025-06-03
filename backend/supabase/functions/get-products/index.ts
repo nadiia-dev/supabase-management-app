@@ -49,6 +49,9 @@ serve(async (req: Request) => {
   const limit = Number(params.get("limit"));
   const status = params.get("status");
   const author = params.get("author");
+  const from = params.get("from");
+  const to = params.get("to");
+  const search = params.get("search");
 
   let query = supabase
     .from("products_with_author")
@@ -63,7 +66,20 @@ serve(async (req: Request) => {
     query = query.eq("author", author);
   }
 
+  if (from && to) {
+    query = query.gte("created_at", from).lte("created_at", to);
+  }
+
+  if (search?.trim()) {
+    query = query.textSearch("search", search.trim(), {
+      type: "websearch",
+      config: "english",
+    });
+  }
+
   const { data, error } = await query.range(offset, offset + limit - 1);
+
+  console.log(data);
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {

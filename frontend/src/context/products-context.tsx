@@ -13,20 +13,23 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { ColumnFiltersState } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { createContext, ReactNode, use } from "react";
+import { DateRange } from "react-day-picker";
 import { toast } from "sonner";
 
-interface FilterValue {
+type FilterValue<T> = {
   id: string;
-  value: string;
-}
+  value: T;
+};
 
 type ProductsContextType = {
   useGetProducts: (
     team_id: string,
     offset: number,
     limit: number,
-    columnFilters?: ColumnFiltersState
+    columnFilters?: ColumnFiltersState,
+    searhc?: string
   ) => ReturnType<typeof useQuery<Result>>;
   useGetProduct: (id: string) => ReturnType<typeof useQuery<Product>>;
   createProduct: UseMutationResult<Product, Error, Product, unknown>;
@@ -53,15 +56,25 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     team_id: string,
     offset: number,
     limit: number,
-    columnFilters?: ColumnFiltersState
+    columnFilters?: ColumnFiltersState,
+    search?: string
   ) => {
     const status = columnFilters?.find((filter) => filter.id === "status") as
-      | FilterValue
+      | FilterValue<string>
       | undefined;
 
     const author = columnFilters?.find((filter) => filter.id === "author") as
-      | FilterValue
+      | FilterValue<string>
       | undefined;
+
+    const date = columnFilters?.find((filter) => filter.id === "date") as
+      | FilterValue<DateRange>
+      | undefined;
+
+    const from = date?.value?.from
+      ? format(date.value.from, "yyyy-MM-dd HH:mm")
+      : "";
+    const to = date?.value?.to ? format(date.value.to, "yyyy-MM-dd HH:mm") : "";
 
     return useQuery({
       queryKey: [
@@ -71,9 +84,21 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
         limit,
         status?.value,
         author?.value,
+        from,
+        to,
+        search,
       ],
       queryFn: () =>
-        getTeamProducts(team_id, offset, limit, status?.value, author?.value),
+        getTeamProducts(
+          team_id,
+          offset,
+          limit,
+          status?.value,
+          author?.value,
+          from,
+          to,
+          search
+        ),
       enabled: !!team_id,
     });
   };

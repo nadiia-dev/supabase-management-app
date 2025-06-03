@@ -1,7 +1,7 @@
 "use client";
 import { useUser } from "@/hooks/use-user";
 import { Avatar, AvatarImage } from "../ui/avatar";
-import { ChevronUp, Sun, User2 } from "lucide-react";
+import { ChevronUp, User2 } from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -70,9 +70,6 @@ const Header = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-      <div>
-        <Sun />
-      </div>
       {isMobile && <MobileMenu />}
     </header>
   );

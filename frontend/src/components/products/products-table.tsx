@@ -27,11 +27,13 @@ import Filters from "./filters";
 import { useFilterContext } from "@/context/filters-context";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import StatusChangeConfirm from "./status-change-confirm";
+import SearchInput from "./search-input";
 
 const ProductsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
 
   const { columnFilters } = useFilterContext();
   const limit = 5;
@@ -43,7 +45,8 @@ const ProductsTable = () => {
     team?.data.team?.id ?? "",
     offset,
     limit,
-    columnFilters
+    columnFilters,
+    search
   );
   const productsData = data?.data;
   const totalCount = productsData ? productsData.length : 1;
@@ -146,6 +149,7 @@ const ProductsTable = () => {
     <div className="mt-2 md:grid md:grid-cols-[300px_1fr] md:gap-4">
       <Filters />
       <div>
+        <SearchInput search={search} setSearch={setSearch} />
         <div className="rounded-md border p-2">
           <Table>
             <TableCaption>A list of your products.</TableCaption>

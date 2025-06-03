@@ -3,7 +3,7 @@ import { createContext, use, useState } from "react";
 
 const FilterContext = createContext<{
   columnFilters: ColumnFiltersState;
-  setFilterValue: (id: string, value: string) => void;
+  setFilterValue: <T>(id: string, value: T) => void;
 }>({ columnFilters: [], setFilterValue: () => {} });
 
 export const useFilterContext = () => use(FilterContext);
@@ -11,7 +11,7 @@ export const useFilterContext = () => use(FilterContext);
 export const FilterProvider = ({ children }: { children: React.ReactNode }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const setFilterValue = (id: string, value: string) => {
+  const setFilterValue = <T,>(id: string, value: T) => {
     setColumnFilters((prev) => {
       const existing = prev.find((f) => f.id === id);
       if (existing) {

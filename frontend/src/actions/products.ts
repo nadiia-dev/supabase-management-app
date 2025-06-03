@@ -141,7 +141,10 @@ export const getTeamProducts = async (
   offset: number,
   limit: number,
   status?: string,
-  member?: string
+  member?: string,
+  from?: string,
+  to?: string,
+  search?: string
 ) => {
   const supabase = await createClient();
   try {
@@ -157,7 +160,9 @@ export const getTeamProducts = async (
         process.env.NEXT_PUBLIC_SUPABASE_URL
       }/functions/v1/get-products/${team_id}?offset=${offset}&limit=${limit}${
         status ? `&status=${status}` : ""
-      }${member ? `&author=${member}` : ""}`,
+      }${member ? `&author=${member}` : ""}${from ? `&from=${from}` : ""}${
+        to ? `&to=${to}` : ""
+      }${search ? `&search=${search}` : ""}`,
       {
         method: "GET",
         headers: {
