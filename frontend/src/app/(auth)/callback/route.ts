@@ -45,7 +45,7 @@ export async function GET(request: Request) {
     );
 
     const userData = await res.json();
-    console.log(userData?.data.team_id);
+
     if (userData?.data.team_id) {
       next = "/dashboard";
     }

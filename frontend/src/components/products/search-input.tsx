@@ -3,7 +3,7 @@
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const SearchInput = ({
   search,
@@ -12,28 +12,31 @@ const SearchInput = ({
   search: string;
   setSearch: Dispatch<SetStateAction<string>>;
 }) => {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const [value, setValue] = useState("");
 
-    const formData = new FormData(e.currentTarget);
-    const searchValue = formData.get("search") as string;
-
-    setSearch(searchValue);
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
   };
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setSearch(value);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  });
+
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="flex gap-1.5 mb-3">
-        <Input
-          placeholder="Search data table..."
-          name="search"
-          defaultValue={search}
-        />
-        <Button type="submit" variant="outline">
-          <Search />
-        </Button>
-      </div>
-    </form>
+    <div className="flex gap-1.5 mb-3">
+      <Input
+        placeholder="Search data table..."
+        name="search"
+        defaultValue={search}
+        onChange={handleSearch}
+      />
+      <Button type="button" variant="outline">
+        <Search />
+      </Button>
+    </div>
   );
 };
 

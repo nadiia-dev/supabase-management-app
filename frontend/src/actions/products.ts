@@ -155,29 +155,37 @@ export const getTeamProducts = async (
     const token = session?.access_token;
     if (!token) throw new Error("No access token");
 
-    const res = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_SUPABASE_URL
-      }/functions/v1/get-products/${team_id}?offset=${offset}&limit=${limit}${
-        status ? `&status=${status}` : ""
-      }${member ? `&author=${member}` : ""}${from ? `&from=${from}` : ""}${
-        to ? `&to=${to}` : ""
-      }${search ? `&search=${search}` : ""}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const baseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/get-products/${team_id}`;
+    const params = new URLSearchParams({
+      offset: offset.toString(),
+      limit: limit.toString(),
+    });
+
+    if (status !== undefined && status !== null)
+      params.append("status", status);
+    if (member !== undefined && member !== null)
+      params.append("author", member);
+    if (from) params.append("from", from);
+    if (to) params.append("to", to);
+    if (search) params.append("search", search);
+
+    const res = await fetch(`${baseUrl}?${params.toString()}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     if (!res.ok) {
       throw new Error(`Error: ${res.status} ${res.statusText}`);
     }
 
     const json = await res.json();
-    return { success: true, data: json.data };
+    return {
+      success: true,
+      data: { data: json.data, totalCount: json.totalCount },
+    };
   } catch (error) {
     if (error instanceof Error) {
       return {

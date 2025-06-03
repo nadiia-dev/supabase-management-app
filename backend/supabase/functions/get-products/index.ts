@@ -55,7 +55,7 @@ serve(async (req: Request) => {
 
   let query = supabase
     .from("products_with_author")
-    .select("*")
+    .select("*", { count: "exact" })
     .eq("team_id", team_id);
 
   if (status) {
@@ -77,7 +77,7 @@ serve(async (req: Request) => {
     });
   }
 
-  const { data, error } = await query.range(offset, offset + limit - 1);
+  const { data, count, error } = await query.range(offset, offset + limit - 1);
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
@@ -86,5 +86,8 @@ serve(async (req: Request) => {
     });
   }
 
-  return new Response(JSON.stringify({ data }), { status: 200, headers });
+  return new Response(JSON.stringify({ data, totalCount: count }), {
+    status: 200,
+    headers,
+  });
 });

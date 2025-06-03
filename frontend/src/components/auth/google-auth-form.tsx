@@ -18,7 +18,7 @@ const GoogleAuthForm = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "http://localhost:3000/callback",
+          redirectTo: `${process.env.NEXT_PUBLIC_CLIENT_URL}/callback`,
         },
       });
       if (error) throw error;

@@ -49,7 +49,7 @@ const ProductsTable = () => {
     search
   );
   const productsData = data?.data;
-  const totalCount = productsData ? productsData.length : 1;
+  const totalCount = productsData ? productsData.totalCount : 1;
   const totalPages = Math.ceil(totalCount / limit);
   const router = useRouter();
 
@@ -132,7 +132,7 @@ const ProductsTable = () => {
       },
     },
   ];
-  const products = productsData ?? [];
+  const products = productsData?.data || [];
 
   const table = useReactTable({
     data: products,
