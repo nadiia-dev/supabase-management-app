@@ -14,7 +14,7 @@ const supabase = createClient(
 
 serve(async (req: Request) => {
   const headers = new Headers({
-    "Access-Control-Allow-Origin": "http://localhost:3000",
+    "Access-Control-Allow-Origin": Deno.env.get("CLIENT_URL"),
     "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
     "Access-Control-Allow-Headers": "Authorization, Content-Type",
   });

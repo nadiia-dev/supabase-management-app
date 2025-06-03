@@ -14,7 +14,7 @@ const supabase = createClient(
 
 serve(async (req: Request) => {
   const headers = new Headers({
-    "Access-Control-Allow-Origin": "http://localhost:3000",
+    "Access-Control-Allow-Origin": Deno.env.get("CLIENT_URL"),
     "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
     "Access-Control-Allow-Headers": "Authorization, Content-Type",
   });
@@ -78,8 +78,6 @@ serve(async (req: Request) => {
   }
 
   const { data, error } = await query.range(offset, offset + limit - 1);
-
-  console.log(data);
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
