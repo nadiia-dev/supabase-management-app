@@ -17,12 +17,17 @@ A full-stack application for managing Supabase projects with a modern Next.js fr
 
 ### Frontend
 
+### Frontend
+
 - **Next.js 14+** - React framework for production
 - **TypeScript** - Type-safe JavaScript
 - **Tailwind CSS** - Utility-first CSS framework
 - **Shadcn/ui** - Modern UI components built on Radix UI
 - **Supabase Auth** - Authentication system
 - **Supabase Realtime** - Real-time subscriptions
+- **react-hook-form** - For flexible and performant form handling
+- **zod** - Schema validation and TypeScript-friendly data parsing
+- **React Query** - Data fetching, caching and state management
 
 ### Backend
 
@@ -68,7 +73,7 @@ Create a `.env.local` file in the `frontend` directory using the same variables 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+NEXT_PUBLIC_CLIENT_URL=your_frontend_app_url
 ```
 
 #### Backend Setup
